@@ -9,10 +9,10 @@ class  ContactPerson extends StatelessWidget {
   Widget build(BuildContext context) {
     return  ListTile(
               title: Text(
-                name,
+                name??'defaut value',
                 style: TextStyle(color: Colors.pinkAccent),
               ),
-              subtitle: Text(phoneNumber),
+              subtitle: Text(phoneNumber??'default value'),
               trailing: Icon(Icons.keyboard_arrow_right),
               onTap: () {
                 Text('Another data');

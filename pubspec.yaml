@@ -34,6 +34,11 @@ dependencies:
   consumer: ^2.3.1
   flutter_webrtc: ^0.8.5
   flutter_speed_dial: ^5.1.0
+  firebase_core: ^1.2.0
+  firebase_database: ^7.0.0
+  sdp_transform: ^0.3.2
+  agora_rtc_engine: ^5.1.0
+  permission_handler:
 
 dev_dependencies:
   flutter_test:
@@ -51,8 +56,8 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  # assets:
-  #   - images/a_dot_burr.jpeg
+  assets:
+    - lib/images/background.jpg
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

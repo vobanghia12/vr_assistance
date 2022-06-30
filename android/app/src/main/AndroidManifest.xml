@@ -9,7 +9,6 @@ package="com.example.blind_assistance">
 <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
 <uses-permission android:name="android.permission.BLUETOOTH" />
 <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
-
    <application
         android:label="blind_assistance"
         android:name="${applicationName}"

@@ -2,20 +2,17 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_complete_guide/models/http_exception.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:intl/date_symbol_data_custom.dart';
-import 'package:provider/provider.dart';
+
 
 class Auth with ChangeNotifier {
   String _token;
   DateTime _expiryDate;
   String _userId;
   bool get isAuth {
-    print(_token);
     return token != null;
   }
 
-  Future<void> _authenticate(
-      String email, String password, String title, String urlSegment) async {
+  Future<void> _authenticate(String email, String password, String title, String urlSegment) async {
     final url = Uri.parse(
         "https://identitytoolkit.googleapis.com/v1/accounts:$urlSegment?key=AIzaSyB4AZ2zS24xJmg_MP8H0z_NSBVRU-yn9vc");
     try {
@@ -32,12 +29,16 @@ class Auth with ChangeNotifier {
       }
       _token = responseData['idToken'];
       _userId = responseData['localId'];
-      _expiryDate = DateTime.now()
-          .add(Duration(seconds: int.parse(responseData['expiresIn'])));
+      _expiryDate = DateTime.now().add(Duration(seconds: int.parse(responseData['expiresIn'])));
+      print(_userId);
       notifyListeners(); //update our User Interface
     } catch (error) {
       throw error;
     }
+  }
+
+  String get UserId {
+    return _userId;
   }
 
   String get token {
@@ -46,7 +47,6 @@ class Auth with ChangeNotifier {
         _token != null) {
       return _token;
     }
-
     return null;
   }
 
@@ -58,5 +58,11 @@ class Auth with ChangeNotifier {
   Future<void> login(String email, String password, String title) async {
     // the function to send data to database
     return _authenticate(email, password, title, 'signInWithPassword');
+  }
+  void logout(){
+    _token = null;
+    _userId = null;
+    _expiryDate = null;
+    notifyListeners();
   }
 }

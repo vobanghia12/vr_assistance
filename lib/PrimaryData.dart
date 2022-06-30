@@ -5,9 +5,9 @@ const DATA_TYPEUSER = const [
   const TypeUser(
     id: '1', 
     title: 'User', 
-    color:  Colors.orange),
+    color:  Colors.white38),
     const TypeUser(
     id: '2', 
     title: 'Helper', 
-    color:  Colors.purple),
+    color:  Colors.white38),
 ];
