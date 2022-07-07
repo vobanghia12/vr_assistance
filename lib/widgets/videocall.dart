@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:agora_rtc_engine/rtc_engine.dart';
-import 'package:agora_rtc_engine/rtc_local_view.dart' as RtcLocalView;
-import 'package:agora_rtc_engine/rtc_remote_view.dart' as RtcRemoteView;
 import 'package:vector_math/vector_math_64.dart' show Vector3;
+import 'package:flutter_vlc_player/flutter_vlc_player.dart';
+import 'package:firebase_database/firebase_database.dart';
 /*import '../api/RTCModule.dart';
 import 'package:provider/provider.dart';
 import '../provider/users.dart';
@@ -17,13 +15,15 @@ class VideoCall extends StatefulWidget {
   State<VideoCall> createState() => _VideoCallState();
 }
 
-const appID = '92f7b54c9e58433aac8a44a913698c67';
-const token =
-    '00692f7b54c9e58433aac8a44a913698c67IACl0kj6/Dyz3rQsnpHY8bMDsShVtcj02SqZ16H11yBskxymvfMAAAAAEAC0+3p1MCK+YgEAAQAwIr5i';
+class _VideoCallState extends State<VideoCall>  {
+  final VlcPlayerController _videoPlayerController =
+      VlcPlayerController.network(
+    'http://192.168.254.133:5000/video_feed',
+    hwAcc: HwAcc.full,
+    autoPlay: true,
+    options: VlcPlayerOptions(),
+  );
 
-class _VideoCallState extends State<VideoCall> {
-  int _remoteUid;
-  RtcEngine _engine;
   bool flag = false;
   double _scale = 1.0;
   double _previousScale = 1.0;
@@ -31,38 +31,13 @@ class _VideoCallState extends State<VideoCall> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    initAgora();
   }
 
-  Future<void> initAgora() async {
-    // retrieve permissions
-    await [Permission.microphone, Permission.camera].request();
-
-    //create the engine
-    _engine = await RtcEngine.create(appID);
-    await _engine.enableVideo();
-    _engine.setEventHandler(
-      RtcEngineEventHandler(
-        joinChannelSuccess: (String channel, int uid, int elapsed) {
-          print("local user $uid joined");
-        },
-        userJoined: (int uid, int elapsed) {
-          print("remote user $uid joined");
-          setState(() {
-            _remoteUid = uid;
-          });
-        },
-        userOffline: (int uid, UserOfflineReason reason) {
-          print("remote user $uid left channel");
-          setState(() {
-            _remoteUid = null;
-          });
-        },
-      ),
-    );
-
-    await _engine.joinChannel(token, "chanel2", null, 0);
+  void dispose() async {
+    super.dispose();
+    await _videoPlayerController.stopRendererScanning();
   }
+
   /*final _localVideoRenderer = RTCVideoRenderer();
   final _remoteVideoRender = RTCVideoRenderer();
   String id;
@@ -155,40 +130,28 @@ class _VideoCallState extends State<VideoCall> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Video Call'),
-      ),
       body: Stack(
         children: [
           Center(
-            child: GestureDetector(
-                onScaleStart: (ScaleStartDetails details) {
-                  print(details);
-                  _previousScale = _scale;
-                  setState(() {});
-                },
-                onScaleUpdate: (ScaleUpdateDetails details) {
-                  _scale = _previousScale * details.scale;
-                  setState(() {});
-                },
-                onScaleEnd: (ScaleEndDetails details) {
-                  print(details);
-                  _previousScale = 1.0;
-                  setState(() {});
-                },
-                child: Transform(
-                    alignment: FractionalOffset.center,
-                    transform:
-                        Matrix4.diagonal3(Vector3(_scale, _scale, _scale)),
-                    child: _remoteVideo())),
-          ),
-         /* Align(
+            child: InteractiveViewer(
+              clipBehavior: Clip.none,
+              minScale: 1,
+              maxScale: 4,
+              
+              child: _remoteVideo()),
+          )
+          /*Align(
             alignment: Alignment.topLeft,
             child: Container(
               width: 100,
               height: 100,
               child: Center(
-                child: RtcLocalView.SurfaceView(),
+                child:  VlcPlayer(
+            controller: _videoPlayerController,
+            aspectRatio: 9/16,
+            placeholder: const Center(child: CircularProgressIndicator()),
+          ),
+                
               ),
             ),
           )*/
@@ -198,7 +161,12 @@ class _VideoCallState extends State<VideoCall> {
         backgroundColor: Colors.red,
         child: Icon(Icons.phone_disabled),
         onPressed: () async {
-          await _engine.leaveChannel();
+          DatabaseReference ref =
+              FirebaseDatabase.instance.ref("helpers/${widget.toID}");
+// Only update the name, leave the age and address!
+          await ref.update({
+            "isSignal": false,
+          });
           Navigator.pop(context);
         },
       ),
@@ -207,13 +175,63 @@ class _VideoCallState extends State<VideoCall> {
 
   // Display remote user's video
   Widget _remoteVideo() {
-    if (_remoteUid != null) {
-      return RtcRemoteView.SurfaceView(uid: _remoteUid);
-    } else {
-      return Text(
-        'Please wait for remote user to join',
-        textAlign: TextAlign.center,
+    return  VlcPlayer(
+        controller: _videoPlayerController,
+        aspectRatio: 9 / 16,
+        placeholder: const Center(child: CircularProgressIndicator()),
       );
-    }
+  
+
+      
   }
 }
+
+
+
+
+/*
+import 'package:flutter/material.dart';
+import 'package:flutter_vlc_player/flutter_vlc_player.dart';
+
+
+
+class VideoCall extends StatefulWidget {
+  final toID;
+  VideoCall(this.toID);
+  @override
+  State<VideoCall> createState() => _VideoCallState();
+}
+
+class _VideoCallState extends State<VideoCall> {
+  final VlcPlayerController _videoPlayerController = VlcPlayerController.network(
+      'http://192.168.254.133:5000/video_feed',
+      hwAcc: HwAcc.full,
+      autoPlay: true,
+      options: VlcPlayerOptions(),
+    );
+
+  Future<void> initializePlayer() async {}
+
+  @override
+  
+
+  @override
+  void dispose() async {
+    super.dispose();
+    await _videoPlayerController.stopRendererScanning();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: AppBar(),
+        body: Center(
+          child: VlcPlayer(
+            controller: _videoPlayerController,
+            aspectRatio: 9/16,
+            placeholder: const Center(child: CircularProgressIndicator()),
+          ),
+        ));
+  }
+}
+*/

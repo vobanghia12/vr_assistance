@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'provider/users.dart';
 import 'ContactList.dart';
 import 'widgets/videocall.dart';
+import 'widgets/MultipleCalling.dart';
 
 class AddingHelpers extends StatefulWidget {
   @override
@@ -14,10 +15,16 @@ class AddingHelpers extends StatefulWidget {
 class _AddingHelpersState extends State<AddingHelpers> {
   var _isInit = true;
   var _isLoading = false;
+
+
   @override
   void initState() {
+    Provider.of<Helpers>(context,listen: false).fetchAllHelpers().then((_) {
+    });
     super.initState();
   }
+  @override
+
   @override
   void didChangeDependencies() {
     if (_isInit) {
@@ -36,81 +43,82 @@ class _AddingHelpersState extends State<AddingHelpers> {
   @override
   Widget build(BuildContext context) {
     final users = Provider.of<Users>(context);
+    final helpers = Provider.of<Helpers>(context);
     return Scaffold(
-        appBar: AppBar(
-          title: Text('User'),
-          backgroundColor: Colors.green[700],
-          actions: <Widget>[
-            Padding(
-                padding: EdgeInsets.only(right: 10.0),
-                child: GestureDetector(
-                  onTap: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) {
-                      return SearchingHelpers();
-                    }));
-                  },
-                  child: Icon(
-                    Icons.add,
-                    size: 40.0,
-                  ),
-                ))
-          ],
-        ),
-        body: Container(
-          child: Column(
-            children: <Widget>[
-              Flexible(
-                flex: 1,
-                fit: FlexFit.tight,
-                child: _isLoading ? CircularProgressIndicator() : RaisedButton(
-                  onPressed: () => {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) {
-                      return ContactList(users.userInfo.helpers);
-                    }))
-                  },
-                  color: Colors.blue,
-                  child: Container(
-                    child: Center(
-                      child: Icon(
-                        Icons.contact_phone,
-                        color: Colors.white,
-                        size: 100,
-                      ),
+          appBar: AppBar(
+            title: Text('User'),
+            backgroundColor: Colors.green[700],
+            actions: <Widget>[
+              Padding(
+                  padding: EdgeInsets.only(right: 10.0),
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) {
+                        return SearchingHelpers();
+                      }));
+                    },
+                    child: Icon(
+                      Icons.add,
+                      size: 40.0,
                     ),
-                    decoration: BoxDecoration(
-                      color: Colors.blue,
-                    ),
-                  ),
-                ),
-              ),
-              Flexible(
-                flex: 1,
-                fit: FlexFit.loose,
-                child: RaisedButton(
-                  onPressed: () => {
-                    
-                  
-                  },
-                  color: Colors.green,
-                  child: Container(
-                    child: Center(
-                      child: Icon(
-                        Icons.phone,
-                        color: Colors.white,
-                        size: 100,
-                      ),
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.green,
-                    ),
-                  ),
-                ),
-              )
+                  ))
             ],
           ),
-        ));
+          body: Container(
+            child: Column(
+              children: <Widget>[
+                Flexible(
+                  flex: 1,
+                  fit: FlexFit.tight,
+                  child: _isLoading ? CircularProgressIndicator() : RaisedButton(
+                    onPressed: () => {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) {
+                        return ContactList(users.userInfo.helpers);
+                      }))
+                    },
+                    color: Colors.blue,
+                    child: Container(
+                      child: Center(
+                        child: Icon(
+                          Icons.contact_phone,
+                          color: Colors.white,
+                          size: 100,
+                        ),
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.blue,
+                      ),
+                    ),
+                  ),
+                ),
+                Flexible(
+                  flex: 1,
+                  fit: FlexFit.loose,
+                  child: RaisedButton(
+                    onPressed: () async=> {
+                      await multipleCalling(helpers.authToken,helpers.HelperList)
+                    
+                    },
+                    color: Colors.green,
+                    child: Container(
+                      child: Center(
+                        child: Icon(
+                          Icons.phone,
+                          color: Colors.white,
+                          size: 100,
+                        ),
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.green,
+                      ),
+                    ),
+                  ),
+                )
+              ],
+            ),
+          ));
   }
 }
 

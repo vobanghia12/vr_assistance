@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_complete_guide/user_login.dart';
@@ -7,6 +8,7 @@ import 'package:provider/provider.dart';
 import '../provider/auth.dart';
 import '../models/http_exception.dart';
 import 'HelperUI.dart';
+import 'package:firebase_database/firebase_database.dart';
 
 class HelperLogin extends StatefulWidget {
   @override
@@ -22,7 +24,16 @@ class _HelperLoginState extends State<HelperLogin> {
   };
   final GlobalKey<FormState> _formKey = GlobalKey();
   var _isLoading = false;
+@override
+  void initState() {
+    setUp();
+    // TODO: implement initState
+    super.initState();
+  }
 
+   void setUp() async{
+      await Firebase.initializeApp();
+  }
   Widget buildRemeberCb() {
     return Container(
         height: 20,
@@ -328,7 +339,7 @@ class _HelperLoginState extends State<HelperLogin> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: <Widget>[
                                   Text(
-                                    'Sign in',
+                                    'Helper',
                                     style: TextStyle(
                                         color: Colors.white,
                                         fontSize: 40,

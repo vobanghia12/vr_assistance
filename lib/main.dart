@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_complete_guide/SingleUser.dart';
 import 'package:flutter_complete_guide/UserUI.dart';
 import 'package:flutter_complete_guide/models/helper.dart';
+import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'option_screen.dart';
 import 'user_login.dart';
 import 'package:provider/provider.dart';
@@ -12,24 +13,36 @@ import 'provider/helpers.dart';
 import 'widgets/videocall.dart';
 import 'helper_login.dart';
 
+
+
 void main() => runApp(MyApp());
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatelessWidget 
+{
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
+
         providers: [
+          
           ChangeNotifierProvider.value(
             value: Auth(),
             // when auth update it will notify all of other widgets
             // only rebuild widget it's listenning
           ),
           ChangeNotifierProxyProvider<Auth, Users>(
-            update: (ctx, auth, previousUsers ) => Users(auth.token, auth.UserId),
+            
+            update: (ctx, auth, previousUsers ) { 
+    
+              return Users(auth.token, auth.UserId);},
+          
           ),
           ChangeNotifierProxyProvider<Auth, Helpers>(
-            update: (ctx, auth, previousHelpers) => Helpers(auth.token, auth.UserId),
+            update: (ctx, auth, previousHelpers) {
+    
+              return Helpers(auth.token, auth.UserId);},
           ),
+        
         ],
         child: Consumer<Auth>(
             builder: (ctx, auth, _) => MaterialApp(
@@ -43,4 +56,5 @@ class MyApp extends StatelessWidget {
                   },
                 )));
   }
+
 }

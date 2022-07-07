@@ -1,6 +1,5 @@
 import 'dart:collection';
 import 'package:flutter_complete_guide/models/http_exception.dart';
-
 import '../models/user.dart';
 import 'package:flutter/material.dart';
 import '../models/helper.dart';
@@ -9,22 +8,30 @@ import 'package:http/http.dart' as http;
 class Helpers with ChangeNotifier {
   final String authToken;
   final String UID;
+  Assister currentAssister;
   List<Assister> _helperList; 
   Helpers(this.authToken, this.UID);
-  final List<Assister> _helpersContacts = [];
+  //final List<Assister> _helpersContacts = [];
    List<Assister> get HelperList {
     return _helperList;
   }
-
+  
   set HelperList(List<Assister> list){
     _helperList = list;
     notifyListeners();
   }
-  List<Assister> get helperContacts {
+  /*(List<Assister> get helperContacts {
     return [..._helpersContacts];
+  }*/
+
+  Future<void> getCurrentHelperInfo() async {
+    final url = Uri.parse('https://blind-assistance-d97b1-default-rtdb.firebaseio.com/helpers/$UID.json?auth=$authToken');
+    final response = await http.get(url);
+    final extractedData = json.decode(response.body) as Map<String, dynamic>;
+    currentAssister = new Assister(id: UID, isSignal: extractedData['isSignal'], email: extractedData['email']);
+    print(currentAssister.isSignal);
+    notifyListeners();
   }
-
-
 
   Future <void> addHelpers(Assister helper) async{
     final url = Uri.parse('https://blind-assistance-d97b1-default-rtdb.firebaseio.com/helpers/$UID.json?auth=$authToken');
@@ -36,6 +43,7 @@ class Helpers with ChangeNotifier {
             'phoneNumber': helper.phoneNumber,
             'email': helper.email,
             'isHelper': helper.isHelper,
+            'isSignal': helper.isSignal,
             }),);
       notifyListeners();
     } catch (error) {
@@ -58,6 +66,7 @@ class Helpers with ChangeNotifier {
           phoneNumber: data['phoneNumber'],
           email: data['email'],
           isHelper: data['isHelper'],
+          isSignal: data['isSignal'],
         ));
       });
       _helperList = loadedHelpers;
@@ -116,5 +125,29 @@ class Helpers with ChangeNotifier {
       }
       existingProduct = null;
   }
+
+  Future<void> updateSignal(String id, List<Assister> helperL) async{
+    final url = Uri.parse(
+        'https://blind-assistance-d97b1-default-rtdb.firebaseio.com/helpers/$id.json');
+    try{
+        final response = await http.patch(url,
+          body: json.encode({
+            'isSignal' : true
+          })
+        );
+         notifyListeners();   
+        
+        
+    }
+    catch(error)
+    {
+      print(error);
+    }
+
+  }
+
+
+
+
 }
 
