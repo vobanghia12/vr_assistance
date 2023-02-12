@@ -22,7 +22,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey();
   var _isLoading = false;
   List<Assister> previousHelpers = [];
-  Helpers newHelper;
+   Helpers newHelper;
 
   Widget buildEmail() {
     return Column(

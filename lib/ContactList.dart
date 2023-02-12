@@ -8,7 +8,6 @@ import 'widgets/videocall.dart';
 class ContactList extends StatefulWidget {
   List<Assister> helpers;
   ContactList(this.helpers);
-
   @override
   State<ContactList> createState() => _ContactListState();
 }
@@ -64,8 +63,7 @@ class _ContactListState extends State<ContactList> {
         title: Text("Contacts"),
         backgroundColor: Colors.blue,
       ),
-      body: _isLoading
-          ? CircularProgressIndicator()
+      body: widget.helpers == null ? Text('Nghia Vo')
           : ListView.builder(
               itemCount: widget.helpers.length,
               itemBuilder: (ctx, i) => ListTile(
@@ -83,30 +81,29 @@ class _ContactListState extends State<ContactList> {
                       },
                     ),
                     trailing: IconButton(
-                      icon: const Icon(Icons.delete),
+                      icon: const Icon(Icons.more_vert),
                       iconSize: 30,
                       color: Colors.red,
-                      onPressed: () =>
-                     showDialog<String>(
-        context: context,
-        builder: (BuildContext context) => AlertDialog(
-          title: const Text('Do you want to delete ?'),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () => Navigator.pop(context, 'Cancel'),
-              child: const Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () {
-                deleteHelpers(widget.helpers[i]); 
-                click = false;
-                Navigator.pop(context, 'OK');},
-              child: const Text('OK'),
-            ),
-          ],
-        ),
-      ),
-                      
+                      onPressed: () => showDialog<String>(
+                        context: context,
+                        builder: (BuildContext context) => AlertDialog(
+                          title: const Text('Do you want to edit ?'),
+                          actions: <Widget>[
+                            TextButton(
+                              onPressed: () => Navigator.pop(context, 'Update'),
+                              child: const Text('Update'),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                deleteHelpers(widget.helpers[i]);
+                                click = false;
+                                Navigator.pop(context, 'Delete');
+                              },
+                              child: const Text('Delete'),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                   )),
     );

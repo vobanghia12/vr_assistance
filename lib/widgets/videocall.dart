@@ -1,8 +1,12 @@
+
+import 'dart:io';
+
 import 'package:flutter/material.dart';
-import 'package:flutter_webrtc/flutter_webrtc.dart';
+import 'package:flutter_complete_guide/user_login.dart';
 import 'package:vector_math/vector_math_64.dart' show Vector3;
 import 'package:flutter_vlc_player/flutter_vlc_player.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 /*import '../api/RTCModule.dart';
 import 'package:provider/provider.dart';
 import '../provider/users.dart';
@@ -15,27 +19,21 @@ class VideoCall extends StatefulWidget {
   State<VideoCall> createState() => _VideoCallState();
 }
 
-class _VideoCallState extends State<VideoCall>  {
-  final VlcPlayerController _videoPlayerController =
-      VlcPlayerController.network(
-    'http://192.168.254.133:5000/video_feed',
-    hwAcc: HwAcc.full,
-    autoPlay: true,
-    options: VlcPlayerOptions(),
-  );
-
-  bool flag = false;
+class _VideoCallState extends State<VideoCall> {
+  TransformationController controller;
   double _scale = 1.0;
   double _previousScale = 1.0;
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
+    // TODO: implement initState
+    controller = TransformationController();
   }
 
   void dispose() async {
+    controller.dispose();
     super.dispose();
-    await _videoPlayerController.stopRendererScanning();
+    if (Platform.isAndroid) WebView.platform = AndroidWebView();
   }
 
   /*final _localVideoRenderer = RTCVideoRenderer();
@@ -50,7 +48,7 @@ class _VideoCallState extends State<VideoCall>  {
     initRenderers();
     _getUserMedia();
      setState(() {
-      
+
     });
     initiateConnection().then((value) => _peerConnection = value);
     super.initState();
@@ -110,7 +108,7 @@ class _VideoCallState extends State<VideoCall>  {
                 child: RTCVideoView(_localVideoRenderer)),
           ],
         ),
-        floatingActionButton: 
+        floatingActionButton:
           FloatingActionButton(
             backgroundColor: Colors.blue,
             foregroundColor: Colors.black,
@@ -121,7 +119,7 @@ class _VideoCallState extends State<VideoCall>  {
               if (click == true) await makingOffer();
 
               click = false;
-                
+
               },
             child: Icon(Icons.camera),
           ),
@@ -130,33 +128,13 @@ class _VideoCallState extends State<VideoCall>  {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          Center(
-            child: InteractiveViewer(
-              clipBehavior: Clip.none,
-              minScale: 1,
-              maxScale: 4,
-              
-              child: _remoteVideo()),
-          )
-          /*Align(
-            alignment: Alignment.topLeft,
-            child: Container(
-              width: 100,
-              height: 100,
-              child: Center(
-                child:  VlcPlayer(
-            controller: _videoPlayerController,
-            aspectRatio: 9/16,
-            placeholder: const Center(child: CircularProgressIndicator()),
-          ),
-                
-              ),
-            ),
-          )*/
-        ],
-      ),
+      body:
+      InteractiveViewer(
+      minScale: 1,
+      maxScale: 4,
+      child: WebView(
+       initialUrl: 'http://192.168.1.142:5000',
+     )),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.red,
         child: Icon(Icons.phone_disabled),
@@ -174,17 +152,9 @@ class _VideoCallState extends State<VideoCall>  {
   }
 
   // Display remote user's video
-  Widget _remoteVideo() {
-    return  VlcPlayer(
-        controller: _videoPlayerController,
-        aspectRatio: 9 / 16,
-        placeholder: const Center(child: CircularProgressIndicator()),
-      );
-  
 
-      
-  }
 }
+
 
 
 
@@ -213,7 +183,7 @@ class _VideoCallState extends State<VideoCall> {
   Future<void> initializePlayer() async {}
 
   @override
-  
+
 
   @override
   void dispose() async {

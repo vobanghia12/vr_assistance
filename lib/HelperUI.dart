@@ -4,7 +4,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_complete_guide/models/helper.dart';
-import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'models/user.dart';
 import 'provider/users.dart';
 import 'package:provider/provider.dart';
@@ -89,7 +88,7 @@ class _HelperUIState extends State<HelperUI> with SingleTickerProviderStateMixin
                     style: TextStyle(color: Colors.pinkAccent),
                   ),
                   subtitle: Text(users.contacts[i].email??'default value'),
-                  trailing: Icon(Icons.delete, color: Colors.red,),
+                  trailing: Icon(Icons.more_vert, color: Colors.red,),
                   onTap: () {
                     Navigator.push(context, MaterialPageRoute(builder: (context) {return VideoCall(id);}));
                   },

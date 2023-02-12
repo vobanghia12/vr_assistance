@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_complete_guide/models/helper.dart';
 import 'searching.dart';
 import 'provider/helpers.dart';
 import 'package:provider/provider.dart';

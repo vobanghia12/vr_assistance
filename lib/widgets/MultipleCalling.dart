@@ -9,5 +9,4 @@ multipleCalling(String token, List <Assister> helpers) async{
     await helper1.updateSignal(helpers[i].id, helpers);
     helpers[i].isSignal = true;
   }
-
 }

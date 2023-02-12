@@ -23,6 +23,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  webview_flutter: ^3.0.4
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -32,13 +33,10 @@ dependencies:
   provider: ^6.0.2
   intl: ^0.17.0
   consumer: ^2.3.1
-  flutter_webrtc: ^0.8.5
   flutter_speed_dial: ^5.1.0
   firebase_core: ^1.19.1
   firebase_database: ^9.0.0
   sdp_transform: ^0.3.2
-  agora_rtc_engine: ^5.1.0
-  permission_handler:
   flutter_vlc_player: ^7.1.5
 
 dev_dependencies:
